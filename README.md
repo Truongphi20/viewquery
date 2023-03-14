@@ -2,7 +2,7 @@
 
 ## 1. Introduct
 
-This script helps find the newest paper on Pubmed by query and count the cited of each article. The result is a html table.
+This script helps find the newest paper on [Pubmed][1] by query and count the cited of each article. The result is a html table.
 
 ## 2. Usage
 
@@ -40,3 +40,5 @@ python .\viewquery.py -q "(microorganism[Title/Abstract]) AND (Genetic Engineeri
 **Note: `-g` tag stand for number of newest paper we want to get, default value is 100. The larger this value, the lower our progress.**
 
 An example of the output can be seen in `example_table.html`
+
+[1]: https://pubmed.ncbi.nlm.nih.gov/advanced/
