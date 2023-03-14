@@ -140,6 +140,8 @@ class pub_search():
 		# print(title_list)
 		self.title = title_list
 
+		self.years = re.findall(r"<Item Name=\"PubDate\" Type=\"Date\">(\d{4})</Item>", records)
+
 	# Summa("1.1.1.6")
 
 	def reputation(self):
@@ -182,11 +184,13 @@ pub_id = handle.pub_ids
 titles = handle.title
 # print(titles)
 
+years = handle.years
+
 reputation = handle.reputation()
 # print(reputation)
 
 dy = pd.DataFrame(reputation, columns=["ID Pubmed", "#Cited"])
-dx = pd.DataFrame(zip(pub_id, titles), columns=["ID Pubmed", "Title"])
+dx = pd.DataFrame(zip(pub_id, titles, years), columns=["ID Pubmed", "Title", "Year"])
 
 df = pd.merge(dx, dy, how="outer", on="ID Pubmed")
 
