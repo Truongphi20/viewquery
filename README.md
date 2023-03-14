@@ -1,2 +1,42 @@
-# viewquery
-Overview NCBI papers by Entrez query 
+# Viewquery: A script for a glimpse of an overview by Entrez query
+
+## 1. Introduct
+
+This script helps find the newest paper on Pubmed by query and count the cited of each article. The result is a html table.
+
+## 2. Usage
+
+For installing:
+```
+git clone https://github.com/Truongphi20/viewquery
+```
+
+For testing:
+```
+ python .\viewquery.py -h
+```
+```
+usage: viewquery.py [-h] [-q QUERY] [-v] [-g GET]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -q QUERY, --query QUERY
+                        query for Pubmed search
+  -v, --version         show version
+  -g GET, --get GET     Number of newest papers get.
+```
+
+## 3. Example
+
+Suppose, we need to find the following query on Pubmed:
+
+`(microorganism[Title/Abstract]) AND (Genetic Engineering[Title/Abstract])`
+
+And we do the following command:
+
+```
+python .\viewquery.py -q "(microorganism[Title/Abstract]) AND (Genetic Engineering[Title/Abstract])" -g 100
+```
+**Note: `-g` tag stand for number of newest paper we want to get, default value is 100. The larger this value, the lower our progress.**
+
+An example of the output can be seen in `example_table.html`
