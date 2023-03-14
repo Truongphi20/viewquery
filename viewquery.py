@@ -204,6 +204,6 @@ df = df.set_index('ID Pubmed')
 if __name__ == "__main__":
     html = generate_html(df)
     # write the HTML content to an HTML file
-    open("data.html", "w", encoding="utf-8").write(html)
+    open("table.html", "w", encoding="utf-8").write(html)
     # open the new HTML file with the default browser
     webbrowser.open("data.html")
