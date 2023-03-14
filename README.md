@@ -43,5 +43,5 @@ An example of the output can be seen in `example_table.html`.
 ![Example_output][2]
 
 [1]: https://pubmed.ncbi.nlm.nih.gov/advanced/
-[2]: https://user-images.githubusercontent.com/96680644/224894563-41f37064-0837-4465-90c0-bb782c2581a8.png
+[2]: https://user-images.githubusercontent.com/96680644/225033123-17065333-cf80-4a9f-8ef1-7808d6a0a4cd.png
 
