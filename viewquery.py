@@ -206,4 +206,4 @@ if __name__ == "__main__":
     # write the HTML content to an HTML file
     open("table.html", "w", encoding="utf-8").write(html)
     # open the new HTML file with the default browser
-    webbrowser.open("data.html")
+    webbrowser.open("table.html")
