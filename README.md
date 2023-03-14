@@ -39,6 +39,9 @@ python .\viewquery.py -q "(microorganism[Title/Abstract]) AND (Genetic Engineeri
 ```
 **Note: `-g` tag stand for number of newest paper we want to get, default value is 100. The larger this value, the lower our progress.**
 
-An example of the output can be seen in `example_table.html`
+An example of the output can be seen in `example_table.html`.
+![Example_output][2]
 
 [1]: https://pubmed.ncbi.nlm.nih.gov/advanced/
+[2]: https://user-images.githubusercontent.com/96680644/224894563-41f37064-0837-4465-90c0-bb782c2581a8.png
+
