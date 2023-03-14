@@ -41,7 +41,7 @@ python .\viewquery.py -q "(microorganism[Title/Abstract]) AND (Genetic Engineeri
 
 An example of the output can be seen in `example_table.html`.
 
-$$Score = \frac{Cited}{Year_now - Year}$$
+$$Score = \frac{Cited}{Year_{now} - Year}$$
 
 ![Example_output][2]
 
