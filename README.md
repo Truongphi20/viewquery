@@ -40,6 +40,9 @@ python .\viewquery.py -q "(microorganism[Title/Abstract]) AND (Genetic Engineeri
 **Note: `-g` tag stand for number of newest paper we want to get, default value is 100. The larger this value, the lower our progress.**
 
 An example of the output can be seen in `example_table.html`.
+
+$$Score = \frac{Cited}{Year_now - Year}$$
+
 ![Example_output][2]
 
 [1]: https://pubmed.ncbi.nlm.nih.gov/advanced/
