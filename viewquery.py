@@ -7,6 +7,7 @@ import argparse
 import numpy as np
 from lxml import etree
 from tqdm import tqdm
+from datetime import date
 
 # Initialize parser
 parser = argparse.ArgumentParser()
@@ -78,9 +79,11 @@ def generate_html(dataframe: pd.DataFrame):
     html = f"""
     <html>
     <header>
+    	<b>The query: {query}</b>
         <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
     </header>
     <body>
+    <br><br>
     {table_html}
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -125,7 +128,8 @@ class pub_search():
 		#print(pub_ids)
 
 		esumma_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi'
-		payload = {'db':'pubmed', 'query_key':f'{self.query_key}', 'WebEnv':f'{self.wed_env}'}
+		payload = {'db':'pubmed', 'query_key':f'{self.query_key}',
+				 'WebEnv':f'{self.wed_env}', 'retmax':args.get}
 		while True:
 			try:
 				handle = requests.get(esumma_url, params=payload, timeout=20)
@@ -140,8 +144,7 @@ class pub_search():
 		# print(title_list)
 		self.title = title_list
 
-		self.years = re.findall(r"<Item Name=\"PubDate\" Type=\"Date\">(\d{4})</Item>", records)
-
+		self.years = re.findall(r"<Item Name=\"PubDate\" Type=\"Date\">(\d{4}).*?<\/Item>", records)
 	# Summa("1.1.1.6")
 
 	def reputation(self):
@@ -169,6 +172,14 @@ class pub_search():
 		pbar.close()
 		return reputation
 
+def CountScore(score, year):
+	current_year = date.today().year
+	a = current_year - year
+	if a == 0:
+		return np.float64("nan")
+	else:
+		return round(score/(current_year-year),2)
+
 # query = "(microorganism[Title/Abstract]) AND (Genetic Engineering[Title/Abstract])"
 query = args.query
 print(f"QUERY: {query}")
@@ -194,7 +205,13 @@ dx = pd.DataFrame(zip(pub_id, titles, years), columns=["ID Pubmed", "Title", "Ye
 
 df = pd.merge(dx, dy, how="outer", on="ID Pubmed")
 
-df = df.sort_values(by='#Cited', ascending=False)
+
+df["Score"] = df.apply(lambda x: CountScore(pd.to_numeric(x["#Cited"]), pd.to_numeric(x["Year"])), axis=1)
+# print(df)
+# df = df.drop(columns=["#Cited", "Year"], axis=1)
+
+
+df = df.sort_values(by='Score', ascending=False)
 df = df.set_index('ID Pubmed')
 # df["Title"] = df["Title"].apply(lambda x: Breakline(x, 70))
 # print(df)
@@ -202,9 +219,9 @@ df = df.set_index('ID Pubmed')
 # with open('data.txt', 'w', encoding="utf-8") as writer:
 # 	writer.write(f"QUERY: {query}\n")
 # 	writer.write(f'Mount of papers: {counts}\n')
-# 	writer.writelines(df.to_string())
+# 	writer.writelines(df.to_string(index = False))
 
-
+# df.to_csv("select_data.csv", index = False)
 if __name__ == "__main__":
     html = generate_html(df)
     # write the HTML content to an HTML file
