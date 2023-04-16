@@ -3,23 +3,10 @@ import re
 import concurrent.futures as futures
 import pandas as pd
 import webbrowser
-import argparse
 import numpy as np
 from lxml import etree
-from tqdm import tqdm
+from stqdm import stqdm
 from datetime import date
-
-# Initialize parser
-parser = argparse.ArgumentParser()
- 
-# Adding optional argument
-parser.add_argument("-q", "--query", help = 'query for Pubmed search')
-parser.add_argument("-v",'--version', action='version', version='%(prog)s 1.0',help = 'show version')
-parser.add_argument("-g", "--get",default = '100', help = 'Number of newest papers get.')
-
-
-# Read arguments from command line
-args = parser.parse_args()
 
 
 def RepuScore_html(pub_id): # Get reputation score from html
@@ -71,43 +58,13 @@ def Breakline(string, num_char):
 	return "\n".join(bucket)
 # print(Breakline("Engineered Saccharomyces cerevisiae for lignocellulosic valorization: a review and perspectives on bioethanol production.", 70))
 
-def generate_html(dataframe: pd.DataFrame):
-    # get the table HTML from the dataframe
-    table_html = dataframe.to_html(table_id="table")
-    # construct the complete HTML with jQuery Data tables
-    # You can disable paging or enable y scrolling on lines 20 and 21 respectively
-    html = f"""
-    <html>
-    <header>
-    	<b>The query: {query}</b>
-        <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet">
-    </header>
-    <body>
-    <br><br>
-    {table_html}
-    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready( function () {{
-            $('#table').DataTable({{
-                // paging: false,    
-                // scrollY: 400,
-            }});
-        }});
-    </script>
-    </body>
-    </html>
-    """
-    # return the html
-    return html
-
 class pub_search():
-	def __init__(self, query):
+	def __init__(self, query, val_get):
 		self.query = query
 
 		esum_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi'
 		payload = {"db":"pubmed", "term":query,
-								'retmax':args.get, 'sort':"pub_date", 'usehistory':"y"}
+								'retmax':val_get, 'sort':"pub_date", 'usehistory':"y"}
 		while True:
 			try:
 				handle = requests.get(esum_url,params=payload, timeout=10)
@@ -129,7 +86,7 @@ class pub_search():
 
 		esumma_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi'
 		payload = {'db':'pubmed', 'query_key':f'{self.query_key}',
-				 'WebEnv':f'{self.wed_env}', 'retmax':args.get}
+				 'WebEnv':f'{self.wed_env}', 'retmax':val_get}
 		while True:
 			try:
 				handle = requests.get(esumma_url, params=payload, timeout=20)
@@ -147,12 +104,12 @@ class pub_search():
 		self.years = re.findall(r"<Item Name=\"PubDate\" Type=\"Date\">(\d{4}).*?<\/Item>", records)
 	# Summa("1.1.1.6")
 
-	def reputation(self):
+	def reputation(self, val_get):
 
 		bucket = self.pub_ids.copy()
 		# print(bucket)
 		reputation = []
-		pbar = tqdm(total = min([int(args.get), int(self.counts)]))
+		pbar = stqdm(total = min([int(val_get), int(self.counts)]))
 
 		while len(bucket) > 0:
 			
@@ -180,51 +137,46 @@ def CountScore(score, year):
 	else:
 		return round(score/(current_year-year),2)
 
+
+def load_data(query, val_get):
+	handle = pub_search(query, val_get)
+
+	counts = handle.counts
+	# print(f'Total of papers: {counts}\n')
+
+	pub_id = handle.pub_ids
+	# print(pub_id)
+
+	titles = handle.title
+	# print(titles)
+
+	years = handle.years
+
+	reputation = handle.reputation(val_get)
+	# print(reputation)
+
+	dy = pd.DataFrame(reputation, columns=["ID Pubmed", "#Cited"])
+	dx = pd.DataFrame(zip(pub_id, titles, years), columns=["ID Pubmed", "Title", "Year"])
+
+	df = pd.merge(dx, dy, how="outer", on="ID Pubmed")
+
+
+	df["Score"] = df.apply(lambda x: CountScore(pd.to_numeric(x["#Cited"]), pd.to_numeric(x["Year"])), axis=1)
+	# print(df)
+	# df = df.drop(columns=["#Cited", "Year"], axis=1)
+
+
+	df = df.sort_values(by='Score', ascending=False)
+	df = df.set_index('ID Pubmed')
+	return df
 # query = "(microorganism[Title/Abstract]) AND (Genetic Engineering[Title/Abstract])"
-query = args.query
-print(f"QUERY: {query}")
 
-handle = pub_search(query)
+# query = '(((3.2.1.23[EC/RN Number]) AND (telomerase))) AND (DNA[Title/Abstract])'
+# print(f"QUERY: {query}")
+# val_get = 50
 
-counts = handle.counts
-print(f'Total of papers: {counts}\n')
+# df=load_data(query)
+# df.to_csv('df.csv', index=False)
 
-pub_id = handle.pub_ids
-# print(pub_id)
+# st.dataframe(df)
 
-titles = handle.title
-# print(titles)
-
-years = handle.years
-
-reputation = handle.reputation()
-# print(reputation)
-
-dy = pd.DataFrame(reputation, columns=["ID Pubmed", "#Cited"])
-dx = pd.DataFrame(zip(pub_id, titles, years), columns=["ID Pubmed", "Title", "Year"])
-
-df = pd.merge(dx, dy, how="outer", on="ID Pubmed")
-
-
-df["Score"] = df.apply(lambda x: CountScore(pd.to_numeric(x["#Cited"]), pd.to_numeric(x["Year"])), axis=1)
-# print(df)
-# df = df.drop(columns=["#Cited", "Year"], axis=1)
-
-
-df = df.sort_values(by='Score', ascending=False)
-df = df.set_index('ID Pubmed')
-# df["Title"] = df["Title"].apply(lambda x: Breakline(x, 70))
-# print(df)
-
-# with open('data.txt', 'w', encoding="utf-8") as writer:
-# 	writer.write(f"QUERY: {query}\n")
-# 	writer.write(f'Mount of papers: {counts}\n')
-# 	writer.writelines(df.to_string(index = False))
-
-# df.to_csv("select_data.csv", index = False)
-if __name__ == "__main__":
-    html = generate_html(df)
-    # write the HTML content to an HTML file
-    open("table.html", "w", encoding="utf-8").write(html)
-    # open the new HTML file with the default browser
-    webbrowser.open("table.html")
