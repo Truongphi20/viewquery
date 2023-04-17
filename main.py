@@ -64,15 +64,17 @@ if submit:
    df_show = df.copy()
    df_show["PID"] = df_show["PID"].apply(lambda xa: addLink(xa))
    
-   st.markdown(df_show.to_html(render_links=True, escape=False),unsafe_allow_html=True)
-   st.write('')
-
    csv = convert_df(df)
 
    st.download_button(
-       label="Download",
+       label="Download csv file",
        data=csv,
        file_name='data.csv',
        mime='text/csv',
    )
    # st.table(df)
+   st.write('')
+   st.markdown(df_show.to_html(render_links=True, escape=False),unsafe_allow_html=True)
+   
+
+   
