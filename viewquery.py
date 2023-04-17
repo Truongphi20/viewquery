@@ -155,10 +155,10 @@ def load_data(query, val_get):
 	reputation = handle.reputation(val_get)
 	# print(reputation)
 
-	dy = pd.DataFrame(reputation, columns=["ID Pubmed", "#Cited"])
-	dx = pd.DataFrame(zip(pub_id, titles, years), columns=["ID Pubmed", "Title", "Year"])
+	dy = pd.DataFrame(reputation, columns=["PID", "#Cited"])
+	dx = pd.DataFrame(zip(pub_id, titles, years), columns=["PID", "Title", "Year"])
 
-	df = pd.merge(dx, dy, how="outer", on="ID Pubmed")
+	df = pd.merge(dx, dy, how="outer", on="PID")
 
 
 	df["Score"] = df.apply(lambda x: CountScore(pd.to_numeric(x["#Cited"]), pd.to_numeric(x["Year"])), axis=1)
@@ -167,7 +167,7 @@ def load_data(query, val_get):
 
 
 	df = df.sort_values(by='Score', ascending=False)
-	df = df.set_index('ID Pubmed')
+	df = df.set_index('PID')
 	return df
 # query = "(microorganism[Title/Abstract]) AND (Genetic Engineering[Title/Abstract])"
 
