@@ -48,12 +48,19 @@ if submit:
    # st_lottie(lottie_coding, height=500, key="coding")
    with st_lottie_spinner(lottie_coding, height=400, key="coding"):
       df, counts=vq.load_data(query, val_get)
-   st.write("_The number of papers was got: " + str(val_get) +f"/{counts}_")
+
+   if val_get <= counts:
+      st.write("_The number of papers was got: " + str(val_get) +f"/{counts}_")
+   else:
+      st.write("_The number of papers was got: " + str(counts) +f"/{counts}_")
 
    df = df.reset_index()
-   df["PID"] = df["PID"].apply(lambda xa: addLink(xa))
    df.index = np.arange(1, len(df) + 1)
-   st.markdown(df.to_html(render_links=True, escape=False),unsafe_allow_html=True)
+
+   df_show = df.copy()
+   df_show["PID"] = df_show["PID"].apply(lambda xa: addLink(xa))
+   
+   st.markdown(df_show.to_html(render_links=True, escape=False),unsafe_allow_html=True)
    st.write('')
 
    csv = convert_df(df)
