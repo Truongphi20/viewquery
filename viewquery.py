@@ -168,7 +168,7 @@ def load_data(query, val_get):
 
 	df = df.sort_values(by='Score', ascending=False)
 	df = df.set_index('PID')
-	return df
+	return df, counts
 # query = "(microorganism[Title/Abstract]) AND (Genetic Engineering[Title/Abstract])"
 
 # query = '(((3.2.1.23[EC/RN Number]) AND (telomerase))) AND (DNA[Title/Abstract])'
