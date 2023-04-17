@@ -49,7 +49,7 @@ if submit:
    with st_lottie_spinner(lottie_coding, height=400, key="coding"):
       df, counts=vq.load_data(query, val_get)
 
-   if val_get <= counts:
+   if int(val_get) <= int(counts):
       st.write("_The number of papers was got: " + str(val_get) +f"/{counts}_")
    else:
       st.write("_The number of papers was got: " + str(counts) +f"/{counts}_")
