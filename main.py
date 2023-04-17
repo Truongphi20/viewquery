@@ -6,6 +6,10 @@ import requests
 from streamlit_lottie import st_lottie
 from streamlit_lottie import st_lottie_spinner
 
+st.set_page_config(page_title="View query", layout='wide')
+# with open('style.css') as f:
+#    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
 def addLink(pid):
    url = 'https://pubmed.ncbi.nlm.nih.gov/'+ str(pid)
    return f'<a target="_blank" href="{url}/">{pid}</a>'
@@ -23,25 +27,25 @@ def loadLottie(url):
    else:
       return r.json()
 
-st.set_page_config(page_title="View query", layout='wide')
 
+st.title("**View query**")
 st.markdown("""
-   # View query
    This tool is used for glimpsing articles on the Pubmed database of NCBI by [Entrez queries](https://www.ncbi.nlm.nih.gov/books/NBK3837/).
    """)
 
 lottie_coding = loadLottie("https://assets7.lottiefiles.com/packages/lf20_ts4jcxke.json")
 
-col1, col2 = st.columns([5,1])
+with st.form("formid"):
+   col1, col2 = st.columns([5,1])
 
-with col1:
-   query = st.text_input("_Please enter your NCBI query:_", 
-                        placeholder="e.g: microorganism[Title/Abstract]", 
-                        key="query")
-with col2:
-   val_get = st.number_input('Number of paper.', min_value=0, value=50)
+   with col1:
+      query = st.text_input("_Please enter your NCBI query:_", 
+                           placeholder="e.g: microorganism[Title/Abstract]", 
+                           key="query")
+   with col2:
+      val_get = st.number_input('Number of paper.', min_value=0, value=50)
 
-submit = st.button('🔍**Search**')
+   submit = st.form_submit_button('🔍**Search**')
 
 if submit:
    st.write("**Your query: " + str(query) + "**")
