@@ -27,7 +27,7 @@ st.set_page_config(page_title="View query", layout='wide')
 
 st.markdown("""
    # View query
-   This tool is for glimpsing articles on the Pubmed database of NCBI by [Entrez queries](https://www.ncbi.nlm.nih.gov/books/NBK3837/).
+   This tool is used for glimpsing articles on the Pubmed database of NCBI by [Entrez queries](https://www.ncbi.nlm.nih.gov/books/NBK3837/).
    """)
 
 lottie_coding = loadLottie("https://assets7.lottiefiles.com/packages/lf20_ts4jcxke.json")
