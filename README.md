@@ -2,7 +2,7 @@
 
 ## 1. Introduct
 
-This script helps find the newest paper on [Pubmed][1] by query and count the cited of each article. The result is a html table.
+This script helps find the newest paper on [Pubmed][1] by query and count the cited of each article. The result is a html table. This is a simple [web app](https://truongphi20-viewquery-main-streamlit-bj23dz.streamlit.app/)
 
 ## 2. Usage
 
