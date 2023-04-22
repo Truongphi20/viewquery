@@ -5,6 +5,7 @@ import viewquery as vq
 import requests
 from streamlit_lottie import st_lottie
 from streamlit_lottie import st_lottie_spinner
+import streamlit_ext as ste
 
 st.set_page_config(page_title="View query", layout='wide')
 # with open('style.css') as f:
@@ -39,7 +40,7 @@ with st.form("formid"):
    col1, col2 = st.columns([5,1])
 
    with col1:
-      query = st.text_input("_Please enter your NCBI query:_", 
+      query = st.text_input("_Please enter your Entrez query:_", 
                            placeholder="e.g: microorganism[Title/Abstract]", 
                            key="query")
    with col2:
@@ -66,7 +67,7 @@ if submit:
    
    csv = convert_df(df)
 
-   st.download_button(
+   ste.download_button(
        label="Download csv file",
        data=csv,
        file_name='data.csv',
