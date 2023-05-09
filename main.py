@@ -7,7 +7,7 @@ from streamlit_lottie import st_lottie
 from streamlit_lottie import st_lottie_spinner
 import streamlit_ext as ste
 
-st.set_page_config(page_title="View query", layout='wide')
+st.set_page_config(page_title="View query", page_icon='icon.png' ,layout='wide')
 # with open('style.css') as f:
 #    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 hide_streamlit_style="""
