@@ -10,6 +10,13 @@ import streamlit_ext as ste
 st.set_page_config(page_title="View query", layout='wide')
 # with open('style.css') as f:
 #    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+hide_streamlit_style="""
+   <style>
+   #MainMenu {visibility: hidden;}
+   footer {visibility: hidden;}
+   </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 def addLink(pid):
    url = 'https://pubmed.ncbi.nlm.nih.gov/'+ str(pid)
@@ -67,15 +74,33 @@ if submit:
    
    csv = convert_df(df)
 
+
+
+
    ste.download_button(
        label="Download csv file",
        data=csv,
        file_name='data.csv',
        mime='text/csv',
    )
+
    # st.table(df)
    st.write('')
    st.markdown(df_show.to_html(render_links=True, escape=False),unsafe_allow_html=True)
+
+   st.markdown(
+   """
+   <head>
+   <style>
+   a.steDownloadButton {
+       background-color: rgb(38,39,48);
+       color: rgb(255, 255, 255);
+   }
+   </style>
+   </head>
+   """,
+   unsafe_allow_html=True
+   )
    
 
    
